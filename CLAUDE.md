@@ -48,7 +48,9 @@ CREATE TABLE aquariums (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
   size TEXT CHECK(size IN ('small', 'medium', 'large')),
-  size_detail TEXT CHECK(size_detail IN ('40-50', '60-70', '80-90', '100', '120', '150-200')),
+  size_detail TEXT CHECK(size_detail IN ('40-50', '60-70', '70', '80-90', '100', '120', '150', '180-200')),
+  width TEXT CHECK(width IN ('20', '20-30', '30', '30-40', '40', '40-50', '50', '50-60', '60')),
+  bottom_sand TEXT CHECK(bottom_sand IN ('8', '10', '12', '15', '20', '30', '40', '50', '60', '75', '100')),
   dimensions TEXT,
   style TEXT,
   image_path TEXT NOT NULL,
@@ -63,9 +65,9 @@ CREATE TABLE aquariums (
 ```
 
 **尺寸分类**:
-- `small` (小型缸): 40-50cm, 60-70cm
+- `small` (小型缸): 40-50cm, 60-70cm, 70cm
 - `medium` (中型缸): 80-90cm, 100cm, 120cm
-- `large` (大型缸): 150-200cm
+- `large` (大型缸): 150cm, 180-200cm
 
 ### 前端设计
 - **主题**: 深海水族风格 - 深蓝渐变背景，水波纹效果
@@ -75,16 +77,6 @@ CREATE TABLE aquariums (
 - `public/admin.html` - 简化的上传界面
 - `public/js/main.js` - 二级尺寸筛选功能
 - `public/css/style.css` - 深海主题渐变背景
-
-### 管理后台上传表单（已简化）
-**仅保留以下字段**:
-1. 尺寸分类 (size) - 下拉选择: 小型缸/中型缸/大型缸
-2. 具体尺寸规格 (size_detail) - 根据尺寸分类动态生成的下拉选项
-3. 价格 (price) - 可选的数字输入
-4. 图片 (image) - 文件上传
-
-**已移除字段**: title, dimensions, style, description, tags
-- 标题自动生成为: `{size_detail}cm 鱼缸造景`
 
 ## 关键代码模式
 
