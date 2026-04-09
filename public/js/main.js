@@ -8,7 +8,8 @@ let currentFilters = {
 const sizeDetailOptions = {
     small: [
         { value: '40-50', label: '40-50cm' },
-        { value: '60-70', label: '60-70cm' }
+        { value: '60-70', label: '60-70cm' },
+        { value: '70', label: '70cm' }
     ],
     medium: [
         { value: '80-90', label: '80-90cm' },
@@ -16,7 +17,8 @@ const sizeDetailOptions = {
         { value: '120', label: '120cm' }
     ],
     large: [
-        { value: '150-200', label: '150-200cm' }
+        { value: '150', label: '150cm' },
+        { value: '180-200', label: '180-200cm' }
     ]
 };
 
@@ -70,19 +72,201 @@ function setupEventListeners() {
         }
     });
 
-    // 灯箱关闭
+    // 灯箱元素
     const lightbox = document.getElementById('lightbox');
-    const closeBtn = lightbox.querySelector('.close');
+    const lightboxContent = lightbox.querySelector('.lightbox-content');
+    const closeBtn = document.getElementById('lightboxClose');
+    const imageWrapper = document.getElementById('imageWrapper');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const imageContainer = lightbox.querySelector('.lightbox-image-container');
+    const zoomControls = lightbox.querySelector('.zoom-controls');
+    const lightboxInfo = lightbox.querySelector('.lightbox-info');
 
+    // 点击关闭按钮
     closeBtn.addEventListener('click', () => {
-        lightbox.classList.remove('active');
+        closeLightbox();
     });
 
+    // 点击灯箱背景关闭
     lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
-            lightbox.classList.remove('active');
+        // 如果灯箱未激活，不处理
+        if (!lightbox.classList.contains('active')) return;
+
+        // 如果点击的是关闭按钮
+        if (e.target === closeBtn || closeBtn.contains(e.target)) {
+            closeLightbox();
+            return;
+        }
+        // 如果点击的是缩放按钮
+        if (e.target.closest('.zoom-controls')) {
+            return;
+        }
+        // 如果点击的是详情区域内的按钮，不关闭
+        if (e.target.closest('.lightbox-info')) {
+            // 检查是否点击的是按钮或输入框等可交互元素
+            if (e.target.closest('button') || e.target.closest('input') || e.target.closest('a')) {
+                return;
+            }
+            // 点击详情区域空白处，关闭
+            closeLightbox();
+            return;
+        }
+        // 如果点击的是图片，切换缩放
+        if (e.target === lightboxImg) {
+            toggleZoom();
+            return;
+        }
+        // 如果点击的是图片容器（包括空白区域）或灯箱内容
+        if (e.target === imageContainer || e.target === imageWrapper ||
+            imageContainer.contains(e.target) || lightboxContent.contains(e.target)) {
+            closeLightbox();
+            return;
+        }
+        // 其他情况（背景）关闭
+        closeLightbox();
+    });
+
+    // ESC 键关闭
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+            closeLightbox();
         }
     });
+
+    // 缩放控制
+    let currentScale = 1;
+    const minScale = 0.5;
+    const maxScale = 4;
+    const scaleStep = 0.5;
+
+    function updateScale(scale) {
+        currentScale = Math.max(minScale, Math.min(maxScale, scale));
+        lightboxImg.style.transform = `scale(${currentScale})`;
+        imageWrapper.classList.toggle('zoomed', currentScale > 1);
+    }
+
+    function toggleZoom() {
+        if (currentScale > 1) {
+            updateScale(1);
+        } else {
+            updateScale(2);
+        }
+    }
+
+    document.getElementById('zoomInBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        updateScale(currentScale + scaleStep);
+    });
+
+    document.getElementById('zoomOutBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        updateScale(currentScale - scaleStep);
+    });
+
+    document.getElementById('zoomResetBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        updateScale(1);
+    });
+
+    // 双指缩放支持
+    let initialDistance = 0;
+    let initialScale = 1;
+
+    lightboxImg.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            initialDistance = getDistance(e.touches[0], e.touches[1]);
+            initialScale = currentScale;
+        }
+    });
+
+    lightboxImg.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const currentDistance = getDistance(e.touches[0], e.touches[1]);
+            const scale = (currentDistance / initialDistance) * initialScale;
+            updateScale(scale);
+        }
+    });
+
+    function getDistance(touch1, touch2) {
+        return Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        updateScale(1);
+        translateX = 0;
+        translateY = 0;
+    }
+
+    // 图片拖动功能
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let translateX = 0;
+    let translateY = 0;
+
+    function startDrag(e) {
+        if (currentScale <= 1) return;
+        if (e.target !== lightboxImg) return;
+
+        isDragging = true;
+        dragStartX = e.clientX || e.touches[0].clientX;
+        dragStartY = e.clientY || e.touches[0].clientY;
+        imageWrapper.classList.add('dragging');
+        lightboxImg.style.cursor = 'grabbing';
+    }
+
+    function doDrag(e) {
+        if (!isDragging) return;
+
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+        if (clientX === undefined) return;
+
+        const deltaX = clientX - dragStartX;
+        const deltaY = clientY - dragStartY;
+
+        translateX += deltaX;
+        translateY += deltaY;
+
+        lightboxImg.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+
+        dragStartX = clientX;
+        dragStartY = clientY;
+    }
+
+    function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        imageWrapper.classList.remove('dragging');
+        lightboxImg.style.cursor = currentScale > 1 ? 'grab' : 'zoom-in';
+    }
+
+    // 鼠标事件
+    lightboxImg.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('mouseup', endDrag);
+
+    // 触摸事件
+    lightboxImg.addEventListener('touchstart', startDrag, { passive: true });
+    document.addEventListener('touchmove', doDrag, { passive: false });
+    document.addEventListener('touchend', endDrag);
+
+    // 重置缩放时重置位置
+    function updateScale(scale) {
+        currentScale = Math.max(minScale, Math.min(maxScale, scale));
+        lightboxImg.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+        imageWrapper.classList.toggle('zoomed', currentScale > 1);
+        lightboxImg.style.cursor = currentScale > 1 ? 'grab' : 'zoom-in';
+
+        // 如果恢复到1x，重置位置
+        if (currentScale === 1) {
+            translateX = 0;
+            translateY = 0;
+        }
+    }
 }
 
 // 更新细分尺寸按钮
@@ -195,12 +379,15 @@ function openLightbox(item) {
     const status = document.getElementById('lightboxStatus');
 
     const sizeText = item.width
-        ? `长${item.size_detail}cm 宽${item.width}cm 鱼缸造景`
-        : `${item.size_detail}cm 鱼缸造景`;
+        ? `长${item.size_detail}cm 宽${item.width}cm`
+        : `${item.size_detail}cm`;
 
     img.src = item.image_path;
     title.textContent = `${item.size_detail}cm 鱼缸造景`;
-    dimensions.textContent = `规格: ${sizeText}`;
+    dimensions.innerHTML = `规格: ${sizeText}`;
+    if (item.bottom_sand) {
+        dimensions.innerHTML += `<br><span style="color: #7dd3fc;">🎁 赠送${item.bottom_sand}斤底沙</span>`;
+    }
     style.textContent = '';
     description.textContent = '';
     tags.textContent = '';

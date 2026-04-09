@@ -4,9 +4,14 @@ const path = require('path');
 const initSqlJs = require('sql.js');
 const fs = require('fs');
 const cors = require('cors');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // 默认密码，生产环境请设置环境变量
+
+// 简单的 token 存储（生产环境请使用 Redis 或数据库）
+const validTokens = new Set();
 
 let db;
 
@@ -63,6 +68,46 @@ const upload = multer({
 });
 
 // API 路由
+
+// 登录验证中间件
+function authMiddleware(req, res, next) {
+    const token = req.headers['authorization'];
+    if (!token || !validTokens.has(token)) {
+        return res.status(401).json({ error: '未授权，请先登录' });
+    }
+    next();
+}
+
+// 登录接口
+app.post('/api/admin/login', (req, res) => {
+    const { password } = req.body;
+    if (password === ADMIN_PASSWORD) {
+        const token = crypto.randomBytes(32).toString('hex');
+        validTokens.add(token);
+        res.json({ token });
+    } else {
+        res.status(401).json({ error: '密码错误' });
+    }
+});
+
+// 登出接口
+app.post('/api/admin/logout', (req, res) => {
+    const token = req.headers['authorization'];
+    if (token) {
+        validTokens.delete(token);
+    }
+    res.json({ message: '已登出' });
+});
+
+// 验证 token 接口
+app.get('/api/admin/verify', (req, res) => {
+    const token = req.headers['authorization'];
+    if (token && validTokens.has(token)) {
+        res.json({ valid: true });
+    } else {
+        res.status(401).json({ valid: false });
+    }
+});
 
 // 获取所有造景（支持筛选）
 app.get('/api/aquariums', (req, res) => {
@@ -126,10 +171,10 @@ app.get('/api/aquariums/:id', (req, res) => {
     }
 });
 
-// 上传新造景
-app.post('/api/aquariums', upload.single('image'), (req, res) => {
+// 上传新造景（需要认证）
+app.post('/api/aquariums', authMiddleware, upload.single('image'), (req, res) => {
     try {
-        const { size, size_detail, width, price } = req.body;
+        const { size, size_detail, width, bottom_sand, price } = req.body;
 
         if (!req.file) {
             return res.status(400).json({ error: '请上传图片' });
@@ -139,9 +184,9 @@ app.post('/api/aquariums', upload.single('image'), (req, res) => {
         const title = width ? `${size_detail}×${width}cm 鱼缸造景` : `${size_detail}cm 鱼缸造景`;
 
         db.run(`
-            INSERT INTO aquariums (title, size, size_detail, width, image_path, price)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `, [title, size, size_detail, width || null, image_path, price || null]);
+            INSERT INTO aquariums (title, size, size_detail, width, bottom_sand, image_path, price)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `, [title, size, size_detail, width || null, bottom_sand || null, image_path, price || null]);
 
         saveDatabase();
 
@@ -160,16 +205,16 @@ app.post('/api/aquariums', upload.single('image'), (req, res) => {
     }
 });
 
-// 更新造景信息
-app.put('/api/aquariums/:id', (req, res) => {
+// 更新造景信息（需要认证）
+app.put('/api/aquariums/:id', authMiddleware, (req, res) => {
     try {
-        const { title, size, size_detail, dimensions, style, description, price, tags } = req.body;
+        const { title, size, size_detail, width, bottom_sand, dimensions, style, description, price, tags } = req.body;
 
         db.run(`
             UPDATE aquariums
-            SET title = ?, size = ?, size_detail = ?, dimensions = ?, style = ?, description = ?, price = ?, tags = ?
+            SET title = ?, size = ?, size_detail = ?, width = ?, bottom_sand = ?, dimensions = ?, style = ?, description = ?, price = ?, tags = ?
             WHERE id = ?
-        `, [title, size, size_detail, dimensions, style, description, price, tags, req.params.id]);
+        `, [title, size, size_detail, width, bottom_sand, dimensions, style, description, price, tags, req.params.id]);
 
         saveDatabase();
 
@@ -179,8 +224,8 @@ app.put('/api/aquariums/:id', (req, res) => {
     }
 });
 
-// 标记为已售出
-app.patch('/api/aquariums/:id/sold', (req, res) => {
+// 标记为已售出（需要认证）
+app.patch('/api/aquariums/:id/sold', authMiddleware, (req, res) => {
     try {
         db.run(`
             UPDATE aquariums
@@ -195,8 +240,8 @@ app.patch('/api/aquariums/:id/sold', (req, res) => {
     }
 });
 
-// 标记为在售
-app.patch('/api/aquariums/:id/available', (req, res) => {
+// 标记为在售（需要认证）
+app.patch('/api/aquariums/:id/available', authMiddleware, (req, res) => {
     try {
         db.run(`
             UPDATE aquariums
@@ -211,8 +256,8 @@ app.patch('/api/aquariums/:id/available', (req, res) => {
     }
 });
 
-// 删除造景
-app.delete('/api/aquariums/:id', (req, res) => {
+// 删除造景（需要认证）
+app.delete('/api/aquariums/:id', authMiddleware, (req, res) => {
     try {
         db.run('DELETE FROM aquariums WHERE id = ?', [req.params.id]);
         saveDatabase();

@@ -59,9 +59,18 @@
 
     <!-- 灯箱 -->
     <div class="lightbox" id="lightbox">
-        <span class="close">&times;</span>
+        <span class="close" id="lightboxClose">&times;</span>
         <div class="lightbox-content">
-            <img src="" alt="" id="lightboxImg">
+            <div class="lightbox-image-container">
+                <div class="lightbox-image-wrapper" id="imageWrapper">
+                    <img src="" alt="" id="lightboxImg">
+                </div>
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoomOutBtn">−</button>
+                    <button class="zoom-btn" id="zoomInBtn">+</button>
+                    <button class="zoom-btn" id="zoomResetBtn">1:1</button>
+                </div>
+            </div>
             <div class="lightbox-info">
                 <h2 id="lightboxTitle"></h2>
                 <p id="lightboxDimensions"></p>
@@ -75,7 +84,7 @@
     </div>
 
     <footer class="footer">
-        <p>© 2026 鱼缸造景作品集 | <a href="admin.html">管理后台</a></p>
+        <p>© 2026 鱼缸造景作品集</p>
     </footer>
 
     <script src="js/main.js"></script>

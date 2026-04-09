@@ -325,13 +325,59 @@ body::before {
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(52, 152, 219, 0.3);
+    position: relative;
+}
+
+.lightbox-image-container {
+    flex: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    position: relative;
+    min-height: 300px;
+    cursor: pointer;
+}
+
+.lightbox-image-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.lightbox-image-wrapper.zoomed {
+    cursor: zoom-out;
+    overflow: auto;
+}
+
+.lightbox-image-wrapper.zoomed img {
+    transform: scale(2);
+    cursor: grab;
+}
+
+.lightbox-image-wrapper.zoomed img:active {
+    cursor: grabbing;
+}
+
+/* 图片可拖动 */
+.lightbox-image-wrapper.dragging img {
+    transition: none;
 }
 
 .lightbox img {
-    max-width: 60%;
+    max-width: 100%;
     max-height: 90vh;
     object-fit: contain;
     border-radius: 12px 0 0 12px;
+    transition: transform 0.3s ease;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
 .lightbox-info {
@@ -358,19 +404,73 @@ body::before {
 
 .lightbox .close {
     position: absolute;
-    top: 30px;
-    right: 50px;
+    top: 15px;
+    right: 15px;
     color: #7dd3fc;
-    font-size: 48px;
+    font-size: 36px;
     cursor: pointer;
     z-index: 2001;
     transition: all 0.3s;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
 }
 
 .lightbox .close:hover {
-    transform: scale(1.2) rotate(90deg);
-    color: #3498db;
+    background: rgba(52, 152, 219, 0.3);
+    color: #fff;
+}
+
+.lightbox .close:active {
+    transform: scale(0.95);
+}
+
+/* 缩放控制按钮 */
+.zoom-controls {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 2002;
+}
+
+.zoom-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: 2px solid rgba(52, 152, 219, 0.5);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+    background: rgba(52, 152, 219, 0.3);
+    border-color: #3498db;
+}
+
+.zoom-btn:active {
+    transform: scale(0.95);
+}
+
+/* 点击背景关闭 */
+.lightbox-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1999;
 }
 
 @media (max-width: 900px) {
@@ -431,4 +531,262 @@ body::before {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(52, 152, 219, 0.7);
+}
+
+/* ========== 响应式优化 - 手机端 ========== */
+@media (max-width: 768px) {
+    /* 头部优化 */
+    .header {
+        padding: 30px 15px 25px;
+    }
+
+    .header h1 {
+        font-size: 1.8em;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        font-size: 0.95em;
+    }
+
+    /* 容器优化 */
+    .container {
+        padding: 15px 12px;
+    }
+
+    /* 筛选栏优化 */
+    .filters {
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .filter-group {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .filter-btn {
+        padding: 10px 14px;
+        font-size: 13px;
+        border-radius: 6px;
+        flex: 1 1 auto;
+        min-width: calc(50% - 4px);
+        text-align: center;
+    }
+
+    .search-box {
+        flex-direction: row;
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    #searchInput {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+    #searchBtn {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    /* 统计信息优化 */
+    .stats {
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .stat-item {
+        padding: 15px 20px;
+        flex: 1 1 calc(33.333% - 8px);
+        min-width: 100px;
+    }
+
+    .stat-number {
+        font-size: 1.6em;
+    }
+
+    .stat-label {
+        font-size: 0.8em;
+    }
+
+    /* 画廊优化 */
+    .gallery {
+        column-count: 1;
+        column-gap: 12px;
+    }
+
+    .gallery-item {
+        margin-bottom: 12px;
+        border-radius: 10px;
+    }
+
+    .gallery-item .info {
+        padding: 14px;
+    }
+
+    .gallery-item .info h3 {
+        font-size: 1em;
+        margin-bottom: 8px;
+    }
+
+    .gallery-item .info p {
+        font-size: 0.85em;
+    }
+
+    .status-badge {
+        padding: 5px 10px;
+        font-size: 0.75em;
+    }
+
+    /* 灯箱优化 */
+    .lightbox {
+        padding: 0;
+    }
+
+    .lightbox-content {
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+        gap: 0;
+    }
+
+    .lightbox-image-container {
+        flex: none;
+        height: 45vh;
+        min-height: 200px;
+    }
+
+    .lightbox img {
+        max-width: 100%;
+        max-height: 45vh;
+        border-radius: 0;
+        object-fit: contain;
+    }
+
+    .lightbox-info {
+        padding: 20px 15px;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .lightbox-info h2 {
+        font-size: 1.4em;
+        margin-bottom: 15px;
+    }
+
+    .lightbox-info p {
+        font-size: 0.95em;
+        margin-bottom: 10px;
+    }
+
+    .lightbox .close {
+        top: 15px;
+        right: 15px;
+        font-size: 36px;
+        width: 44px;
+        height: 44px;
+        line-height: 44px;
+        text-align: center;
+        background: rgba(0,0,0,0.5);
+        border-radius: 50%;
+    }
+
+    .zoom-controls {
+        bottom: 10px;
+    }
+
+    .zoom-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+
+    /* 页脚优化 */
+    .footer {
+        padding: 20px 15px;
+        margin-top: 30px;
+        font-size: 0.85em;
+    }
+}
+
+/* 小屏手机优化 */
+@media (max-width: 380px) {
+    .header h1 {
+        font-size: 1.5em;
+    }
+
+    .filter-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+        min-width: calc(50% - 4px);
+    }
+
+    .stat-item {
+        padding: 12px 10px;
+    }
+
+    .stat-number {
+        font-size: 1.3em;
+    }
+
+    .lightbox-info h2 {
+        font-size: 1.2em;
+    }
+}
+
+/* 触摸优化 */
+@media (hover: none) and (pointer: coarse) {
+    .filter-btn:active {
+        background: rgba(52, 152, 219, 0.3);
+        transform: scale(0.98);
+    }
+
+    .gallery-item:active {
+        transform: scale(0.98);
+    }
+
+    .gallery-item:hover {
+        transform: none;
+    }
+
+    .gallery-item:hover img {
+        transform: none;
+    }
+}
+
+/* 横屏模式优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .header {
+        padding: 15px 20px;
+    }
+
+    .header h1 {
+        font-size: 1.4em;
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        font-size: 0.85em;
+    }
+
+    .lightbox img {
+        max-height: 70vh;
+    }
+
+    .lightbox-info {
+        padding: 15px;
+    }
+
+    .lightbox-info h2 {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
+
+    .lightbox-info p {
+        margin-bottom: 8px;
+    }
 }
