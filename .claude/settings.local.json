@@ -6,7 +6,9 @@
       "Bash(netstat -ano)",
       "Bash(tasklist)",
       "Bash(taskkill:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
     ]
   }
 }
