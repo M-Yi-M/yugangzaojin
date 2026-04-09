@@ -1,0 +1,434 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(180deg, #0a1929 0%, #1a3a52 50%, #2d5f7a 100%);
+    min-height: 100vh;
+    color: #e0e0e0;
+    position: relative;
+}
+
+/* 水波纹背景效果 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(ellipse at 20% 30%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(46, 204, 113, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.header {
+    text-align: center;
+    padding: 50px 20px 40px;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(26, 58, 82, 0.9) 0%, rgba(13, 41, 62, 0.95) 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    border-bottom: 2px solid rgba(52, 152, 219, 0.3);
+}
+
+.header h1 {
+    font-size: 2.8em;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    font-size: 1.15em;
+    opacity: 0.85;
+    color: #7dd3fc;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* 筛选栏 - 深色水族风格 */
+.filters {
+    background: linear-gradient(135deg, rgba(15, 32, 46, 0.95) 0%, rgba(26, 47, 64, 0.95) 100%);
+    padding: 25px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.filter-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+}
+
+.filter-btn {
+    padding: 11px 24px;
+    border: 2px solid rgba(52, 152, 219, 0.3);
+    background: rgba(26, 58, 82, 0.6);
+    color: #b0d4e8;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.filter-btn:hover {
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.2);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    border-color: #3498db;
+    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.4);
+}
+
+.search-box {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+#searchInput {
+    flex: 1;
+    padding: 12px 18px;
+    border: 2px solid rgba(52, 152, 219, 0.3);
+    background: rgba(26, 58, 82, 0.6);
+    color: #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s;
+}
+
+#searchInput::placeholder {
+    color: rgba(176, 212, 232, 0.5);
+}
+
+#searchInput:focus {
+    border-color: #3498db;
+    background: rgba(26, 58, 82, 0.8);
+    box-shadow: 0 0 12px rgba(52, 152, 219, 0.3);
+}
+
+#searchBtn {
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+#searchBtn:hover {
+    background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.4);
+    transform: translateY(-2px);
+}
+
+/* 统计信息 */
+.stats {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 35px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    background: linear-gradient(135deg, rgba(15, 32, 46, 0.95) 0%, rgba(26, 47, 64, 0.95) 100%);
+    padding: 25px 50px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    transition: transform 0.3s;
+}
+
+.stat-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(52, 152, 219, 0.3);
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #3498db;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 8px rgba(52, 152, 219, 0.5);
+}
+
+.stat-label {
+    color: #b0d4e8;
+    font-size: 1em;
+    letter-spacing: 1px;
+}
+
+/* 画廊 - 瀑布流 */
+.gallery {
+    column-count: 4;
+    column-gap: 20px;
+}
+
+@media (max-width: 1400px) {
+    .gallery { column-count: 3; }
+}
+
+@media (max-width: 1000px) {
+    .gallery { column-count: 2; }
+}
+
+@media (max-width: 600px) {
+    .gallery { column-count: 1; }
+}
+
+.gallery-item {
+    break-inside: avoid;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    background: linear-gradient(135deg, rgba(15, 32, 46, 0.9) 0%, rgba(26, 47, 64, 0.9) 100%);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(52, 152, 219, 0.15);
+}
+
+.gallery-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(52, 152, 219, 0.4);
+    border-color: rgba(52, 152, 219, 0.4);
+}
+
+.gallery-item img {
+    width: 100%;
+    display: block;
+    border-radius: 12px 12px 0 0;
+    transition: transform 0.4s;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.gallery-item .info {
+    padding: 18px;
+    background: linear-gradient(180deg, rgba(15, 32, 46, 0.95) 0%, rgba(10, 25, 41, 0.98) 100%);
+}
+
+.gallery-item .info h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.gallery-item .info p {
+    font-size: 0.95em;
+    color: #b0d4e8;
+    margin-bottom: 6px;
+    line-height: 1.6;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.available {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.4);
+}
+
+.status-badge.sold {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(127, 140, 141, 0.4);
+}
+
+.loading {
+    text-align: center;
+    padding: 60px;
+    color: #7dd3fc;
+    font-size: 1.3em;
+    letter-spacing: 1px;
+}
+
+/* 灯箱 */
+.lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 25, 41, 0.97);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    backdrop-filter: blur(8px);
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.lightbox-content {
+    display: flex;
+    gap: 40px;
+    max-width: 1400px;
+    max-height: 90vh;
+    background: linear-gradient(135deg, rgba(15, 32, 46, 0.98) 0%, rgba(26, 47, 64, 0.98) 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.lightbox img {
+    max-width: 60%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 12px 0 0 12px;
+}
+
+.lightbox-info {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    color: #e0e0e0;
+}
+
+.lightbox-info h2 {
+    margin-bottom: 20px;
+    color: #fff;
+    font-size: 2em;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.lightbox-info p {
+    margin-bottom: 14px;
+    color: #b0d4e8;
+    line-height: 1.8;
+    font-size: 1.05em;
+}
+
+.lightbox .close {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    color: #7dd3fc;
+    font-size: 48px;
+    cursor: pointer;
+    z-index: 2001;
+    transition: all 0.3s;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox .close:hover {
+    transform: scale(1.2) rotate(90deg);
+    color: #3498db;
+}
+
+@media (max-width: 900px) {
+    .lightbox-content {
+        flex-direction: column;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .lightbox img {
+        max-width: 100%;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .lightbox-info {
+        padding: 25px;
+    }
+}
+
+/* 页脚 */
+.footer {
+    text-align: center;
+    padding: 35px;
+    color: #7dd3fc;
+    background: linear-gradient(135deg, rgba(15, 32, 46, 0.9) 0%, rgba(13, 41, 62, 0.95) 100%);
+    margin-top: 50px;
+    border-top: 2px solid rgba(52, 152, 219, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+.footer a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.footer a:hover {
+    color: #5dade2;
+    text-decoration: underline;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(15, 32, 46, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(52, 152, 219, 0.5);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(52, 152, 219, 0.7);
+}

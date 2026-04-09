@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 鱼缸造景</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upload-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .list-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .item-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .item img {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .status-badge.available {
+            background: #4caf50;
+            color: white;
+        }
+
+        .status-badge.sold {
+            background: #f44336;
+            color: white;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 管理后台</h1>
+            <a href="index.html" class="btn btn-primary">返回前台</a>
+        </div>
+
+        <div id="message"></div>
+
+        <!-- 上传表单 -->
+        <div class="upload-section">
+            <h2>上传新作品</h2>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>尺寸分类 *</label>
+                    <select name="size" id="sizeSelect" required>
+                        <option value="">请选择</option>
+                        <option value="small">小型缸 (40-70cm)</option>
+                        <option value="medium">中型缸 (80-120cm)</option>
+                        <option value="large">大型缸 (150-200cm)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>具体尺寸规格 (长度) *</label>
+                    <select name="size_detail" id="sizeDetailSelect" required>
+                        <option value="">请先选择尺寸分类</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>宽度 *</label>
+                    <select name="width" required>
+                        <option value="">请选择宽度</option>
+                        <option value="20">20cm</option>
+                        <option value="20-30">20-30cm</option>
+                        <option value="30">30cm</option>
+                        <option value="30-40">30-40cm</option>
+                        <option value="40">40cm</option>
+                        <option value="40-50">40-50cm</option>
+                        <option value="50">50cm</option>
+                        <option value="50-60">50-60cm</option>
+                        <option value="60">60cm</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>价格 (元)</label>
+                    <input type="number" name="price" step="0.01" placeholder="留空表示不显示价格">
+                </div>
+
+                <div class="form-group">
+                    <label>图片 *</label>
+                    <input type="file" name="image" accept="image/*" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">上传作品</button>
+            </form>
+        </div>
+
+        <!-- 作品列表 -->
+        <div class="list-section">
+            <h2>作品列表</h2>
+            <div class="item-list" id="itemList">
+                <p>加载中...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 尺寸联动
+        const sizeOptions = {
+            small: [
+                { value: '40-50', label: '40-50cm' },
+                { value: '60-70', label: '60-70cm' }
+            ],
+            medium: [
+                { value: '80-90', label: '80-90cm' },
+                { value: '100', label: '100cm' },
+                { value: '120', label: '120cm' }
+            ],
+            large: [
+                { value: '150-200', label: '150-200cm' }
+            ]
+        };
+
+        document.getElementById('sizeSelect').addEventListener('change', (e) => {
+            const size = e.target.value;
+            const sizeDetailSelect = document.getElementById('sizeDetailSelect');
+
+            if (!size) {
+                sizeDetailSelect.innerHTML = '<option value="">请先选择尺寸分类</option>';
+                return;
+            }
+
+            const options = sizeOptions[size];
+            sizeDetailSelect.innerHTML = options.map(opt =>
+                `<option value="${opt.value}">${opt.label}</option>`
+            ).join('');
+        });
+
+        // 上传表单
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/api/aquariums', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage('上传成功！', 'success');
+                    e.target.reset();
+                    loadItems();
+                } else {
+                    showMessage('上传失败: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showMessage('上传失败: ' + error.message, 'error');
+            }
+        });
+
+        // 加载作品列表
+        async function loadItems() {
+            const itemList = document.getElementById('itemList');
+
+            try {
+                const response = await fetch('/api/aquariums');
+                const items = await response.json();
+
+                if (items.length === 0) {
+                    itemList.innerHTML = '<p>暂无作品</p>';
+                    return;
+                }
+
+                itemList.innerHTML = items.map(item => {
+                    const statusClass = item.status === 'sold' ? 'sold' : 'available';
+                    const statusText = item.status === 'sold' ? '已售' : '在售';
+                    const sizeText = item.width ? `${item.size_detail}×${item.width}cm` : `${item.size_detail}cm`;
+
+                    return `
+                        <div class="item">
+                            <img src="${item.image_path}" alt="${item.title}">
+                            <div class="item-info">
+                                <h3>${sizeText} 鱼缸造景</h3>
+                                <p>规格: ${sizeText}</p>
+                                ${item.price ? `<p>价格: ¥${item.price}</p>` : ''}
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                            </div>
+                            <div class="item-actions">
+                                ${item.status === 'available'
+                                    ? `<button class="btn btn-danger" onclick="markAsSold(${item.id})">标记已售</button>`
+                                    : `<button class="btn btn-success" onclick="markAsAvailable(${item.id})">标记在售</button>`
+                                }
+                                <button class="btn btn-danger" onclick="deleteItem(${item.id})">删除</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                itemList.innerHTML = '<p>加载失败</p>';
+            }
+        }
+
+        // 标记为已售
+        async function markAsSold(id) {
+            if (!confirm('确定标记为已售？')) return;
+
+            try {
+                const response = await fetch(`/api/aquariums/${id}/sold`, {
+                    method: 'PATCH'
+                });
+
+                if (response.ok) {
+                    showMessage('已标记为售出', 'success');
+                    loadItems();
+                } else {
+                    showMessage('操作失败', 'error');
+                }
+            } catch (error) {
+                showMessage('操作失败: ' + error.message, 'error');
+            }
+        }
+
+        // 标记为在售
+        async function markAsAvailable(id) {
+            if (!confirm('确定标记为在售？')) return;
+
+            try {
+                const response = await fetch(`/api/aquariums/${id}/available`, {
+                    method: 'PATCH'
+                });
+
+                if (response.ok) {
+                    showMessage('已标记为在售', 'success');
+                    loadItems();
+                } else {
+                    showMessage('操作失败', 'error');
+                }
+            } catch (error) {
+                showMessage('操作失败: ' + error.message, 'error');
+            }
+        }
+
+        // 删除作品
+        async function deleteItem(id) {
+            if (!confirm('确定删除这个作品？此操作不可恢复！')) return;
+
+            try {
+                const response = await fetch(`/api/aquariums/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showMessage('删除成功', 'success');
+                    loadItems();
+                } else {
+                    showMessage('删除失败', 'error');
+                }
+            } catch (error) {
+                showMessage('删除失败: ' + error.message, 'error');
+            }
+        }
+
+        // 显示消息
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        // 页面加载时加载列表
+        loadItems();
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鱼缸造景作品集</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>🐠 鱼缸造景作品集</h1>
+        <p class="subtitle">水草造景 · 自然之美</p>
+    </header>
+
+    <div class="container">
+        <!-- 筛选栏 -->
+        <div class="filters">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all" data-type="size">全部尺寸</button>
+                <button class="filter-btn" data-filter="small" data-type="size">小型缸 (40-70cm)</button>
+                <button class="filter-btn" data-filter="medium" data-type="size">中型缸 (80-120cm)</button>
+                <button class="filter-btn" data-filter="large" data-type="size">大型缸 (150-200cm)</button>
+            </div>
+            <div class="filter-group" id="sizeDetailGroup" style="display: none;">
+                <!-- 动态生成细分尺寸按钮 -->
+            </div>
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all" data-type="status">全部状态</button>
+                <button class="filter-btn" data-filter="available" data-type="status">在售</button>
+                <button class="filter-btn" data-filter="sold" data-type="status">已售</button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索标题、标签...">
+                <button id="searchBtn">🔍</button>
+            </div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="stats" id="stats">
+            <div class="stat-item">
+                <span class="stat-number">0</span>
+                <span class="stat-label">总作品</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">0</span>
+                <span class="stat-label">在售</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">0</span>
+                <span class="stat-label">已售</span>
+            </div>
+        </div>
+
+        <!-- 图片画廊 -->
+        <div class="gallery" id="gallery">
+            <div class="loading">加载中...</div>
+        </div>
+    </div>
+
+    <!-- 灯箱 -->
+    <div class="lightbox" id="lightbox">
+        <span class="close">&times;</span>
+        <div class="lightbox-content">
+            <img src="" alt="" id="lightboxImg">
+            <div class="lightbox-info">
+                <h2 id="lightboxTitle"></h2>
+                <p id="lightboxDimensions"></p>
+                <p id="lightboxStyle"></p>
+                <p id="lightboxDescription"></p>
+                <p id="lightboxTags"></p>
+                <p id="lightboxPrice"></p>
+                <span id="lightboxStatus" class="status-badge"></span>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2026 鱼缸造景作品集 | <a href="admin.html">管理后台</a></p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
