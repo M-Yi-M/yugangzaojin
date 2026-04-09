@@ -8,14 +8,18 @@
     "dev": "nodemon server.js",
     "init-db": "node scripts/init-db.js"
   },
-  "keywords": ["aquarium", "gallery"],
+  "keywords": [
+    "aquarium",
+    "gallery"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.1",
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
-    "sql.js": "^1.10.3",
-    "cors": "^2.8.5"
+    "sql.js": "^1.10.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

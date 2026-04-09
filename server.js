@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -8,7 +10,7 @@ const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // 默认密码，生产环境请设置环境变量
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD; // 必须从环境变量读取，无默认值
 
 // 简单的 token 存储（生产环境请使用 Redis 或数据库）
 const validTokens = new Set();
@@ -80,6 +82,9 @@ function authMiddleware(req, res, next) {
 
 // 登录接口
 app.post('/api/admin/login', (req, res) => {
+    if (!ADMIN_PASSWORD) {
+        return res.status(500).json({ error: '管理员密码未设置，请联系服务器管理员' });
+    }
     const { password } = req.body;
     if (password === ADMIN_PASSWORD) {
         const token = crypto.randomBytes(32).toString('hex');

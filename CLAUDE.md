@@ -105,6 +105,19 @@ saveDatabase(); // 关键！不调用会丢失数据
 - 二级筛选: 先选尺寸分类 → 再选具体尺寸
 - 前端仅在选择尺寸分类后才显示具体尺寸按钮
 
+### 环境变量配置
+密码等敏感配置通过 `.env` 文件管理（已添加到 `.gitignore`）：
+```bash
+# .env 文件内容
+ADMIN_PASSWORD=your_strong_password_here
+PORT=3000
+```
+
+**首次部署必须设置**：
+1. 复制 `.env.example` 为 `.env`
+2. 修改 `ADMIN_PASSWORD` 为强密码
+3. 运行 `npm start`
+
 ## 常见问题与解决方案
 
 ### 数据库结构变更
