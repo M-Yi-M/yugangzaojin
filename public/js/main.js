@@ -339,7 +339,6 @@ async function loadGallery() {
                 <div class="info">
                     <h3>${item.size_detail}cm 鱼缸造景</h3>
                     ${item.price ? `<p>💰 ¥${item.price}</p>` : ''}
-                    <span class="status-badge ${statusClass}">${statusText}</span>
                 </div>
             `;
 
@@ -393,10 +392,8 @@ function openLightbox(item) {
     tags.textContent = '';
     price.textContent = item.price ? `价格: ¥${item.price}` : '';
 
-    const statusClass = item.status === 'sold' ? 'sold' : 'available';
-    const statusText = item.status === 'sold' ? '已售' : '在售';
-    status.className = `status-badge ${statusClass}`;
-    status.textContent = statusText;
+    // 隐藏状态标签
+    status.style.display = 'none';
 
     lightbox.classList.add('active');
 }

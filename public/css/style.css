@@ -4,6 +4,15 @@
     box-sizing: border-box;
 }
 
+/* 隐藏统计和状态筛选区域 */
+.stats {
+    display: none !important;
+}
+
+.filters .filter-group:nth-of-type(3) {
+    display: none !important;
+}
+
 body {
     font-family: "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
     background: linear-gradient(180deg, #0a1929 0%, #1a3a52 50%, #2d5f7a 100%);
