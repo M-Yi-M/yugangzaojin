@@ -225,8 +225,8 @@ function setupEventListeners() {
 
         if (clientX === undefined) return;
 
-        const deltaX = clientX - dragStartX;
-        const deltaY = clientY - dragStartY;
+        const deltaX = (clientX - dragStartX) * 0.6;
+        const deltaY = (clientY - dragStartY) * 0.6;
 
         translateX += deltaX;
         translateY += deltaY;
