@@ -111,9 +111,13 @@ function setupEventListeners() {
             closeLightbox();
             return;
         }
-        // 如果点击的是图片，切换缩放
-        if (e.target === lightboxImg) {
+        // 如果点击的是图片，切换缩放（只有没有拖拽过才切换）
+        if (e.target === lightboxImg && !hasDragged) {
             toggleZoom();
+            return;
+        }
+        // 如果拖拽过，不处理点击（避免关闭）
+        if (hasDragged) {
             return;
         }
         // 如果点击的是图片容器（包括空白区域）或灯箱内容
@@ -201,6 +205,7 @@ function setupEventListeners() {
 
     // 图片拖动功能
     let isDragging = false;
+    let hasDragged = false;
     let dragStartX = 0;
     let dragStartY = 0;
     let translateX = 0;
@@ -211,6 +216,7 @@ function setupEventListeners() {
         if (e.target !== lightboxImg) return;
 
         isDragging = true;
+        hasDragged = false;
         dragStartX = e.clientX || e.touches[0].clientX;
         dragStartY = e.clientY || e.touches[0].clientY;
         imageWrapper.classList.add('dragging');
@@ -225,6 +231,7 @@ function setupEventListeners() {
 
         if (clientX === undefined) return;
 
+        hasDragged = true;
         const deltaX = (clientX - dragStartX) * 0.6;
         const deltaY = (clientY - dragStartY) * 0.6;
 
@@ -242,6 +249,10 @@ function setupEventListeners() {
         isDragging = false;
         imageWrapper.classList.remove('dragging');
         lightboxImg.style.cursor = currentScale > 1 ? 'grab' : 'zoom-in';
+        // 确保 transform 保持当前缩放和位置
+        lightboxImg.style.transform = `scale(${currentScale}) translate(${translateX}px, ${translateY}px)`;
+        // 重置 hasDragged，准备下次点击
+        setTimeout(() => { hasDragged = false; }, 0);
     }
 
     // 鼠标事件
